@@ -14,6 +14,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.text.DefaultCaret;
 /**
  *
  * @author Ariel
@@ -30,6 +31,7 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         testFiles = new LinkedList<>();
         sourceFiles = new LinkedList<>();
+        
     }
 
     /**
@@ -258,11 +260,6 @@ public class MainWindow extends javax.swing.JFrame {
         
     }//GEN-LAST:event_openProjectMenuItemActionPerformed
 
-    private void testCodeTextAreaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_testCodeTextAreaFocusLost
-        
-        
-    }//GEN-LAST:event_testCodeTextAreaFocusLost
-
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -295,16 +292,6 @@ public class MainWindow extends javax.swing.JFrame {
     private void closeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMenuItemActionPerformed
         this.dispose();
     }//GEN-LAST:event_closeMenuItemActionPerformed
-
-    private void fileListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fileListMouseClicked
-        String actualFile = fileList.getSelectedItem();
-        if(actualFile.contains("/"))
-        {
-            String[] temp = actualFile.split("/");
-            actualFile = temp[temp.length-1];
-        }
-        refreshTextAreas(actualFile);
-    }//GEN-LAST:event_fileListMouseClicked
 
     private void closeOneFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeOneFileMenuItemActionPerformed
         String actualFileFull = fileList.getSelectedItem();
@@ -510,38 +497,6 @@ public class MainWindow extends javax.swing.JFrame {
 
     }//GEN-LAST:event_saveProjectMenuItemActionPerformed
 
-    private void testCodeTextAreaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_testCodeTextAreaKeyTyped
-        String actualFile = fileList.getSelectedItem();
-        if(actualFile.contains("/"))
-        {
-            String[] temp = actualFile.split("/");
-            actualFile = temp[temp.length-1];
-        }
-        for(TestFile f : testFiles)
-        {
-            if(f.refFile.equals(actualFile))
-            {
-                f.generatedCode = testCodeTextArea.getText();
-            }
-        }
-    }//GEN-LAST:event_testCodeTextAreaKeyTyped
-
-    private void testCodeTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_testCodeTextAreaKeyReleased
-        String actualFile = fileList.getSelectedItem();
-        if(actualFile.contains("/"))
-        {
-            String[] temp = actualFile.split("/");
-            actualFile = temp[temp.length-1];
-        }
-        for(TestFile f : testFiles)
-        {
-            if(f.refFile.equals(actualFile))
-            {
-                f.generatedCode = testCodeTextArea.getText();
-            }
-        }
-    }//GEN-LAST:event_testCodeTextAreaKeyReleased
-
     private void saveAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAllMenuItemActionPerformed
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -589,6 +544,47 @@ public class MainWindow extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_saveAllMenuItemActionPerformed
+
+    private void fileListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fileListMouseClicked
+        String actualFile = fileList.getSelectedItem();
+        if(actualFile.contains("/"))
+        {
+            String[] temp = actualFile.split("/");
+            actualFile = temp[temp.length-1];
+        }
+        refreshTextAreas(actualFile);
+    }//GEN-LAST:event_fileListMouseClicked
+
+    private void testCodeTextAreaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_testCodeTextAreaKeyTyped
+        String actualFile = fileList.getSelectedItem();
+        if (actualFile.contains("/")) {
+            String[] temp = actualFile.split("/");
+            actualFile = temp[temp.length - 1];
+        }
+        for (TestFile f : testFiles) {
+            if (f.refFile.equals(actualFile)) {
+                f.generatedCode = testCodeTextArea.getText();
+            }
+        }
+    }//GEN-LAST:event_testCodeTextAreaKeyTyped
+
+    private void testCodeTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_testCodeTextAreaKeyReleased
+        String actualFile = fileList.getSelectedItem();
+        if (actualFile.contains("/")) {
+            String[] temp = actualFile.split("/");
+            actualFile = temp[temp.length - 1];
+        }
+        for (TestFile f : testFiles) {
+            if (f.refFile.equals(actualFile)) {
+                f.generatedCode = testCodeTextArea.getText();
+            }
+        }
+    }//GEN-LAST:event_testCodeTextAreaKeyReleased
+
+    private void testCodeTextAreaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_testCodeTextAreaFocusLost
+
+
+  }//GEN-LAST:event_testCodeTextAreaFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem closeAllFilesMenuItem;
@@ -653,7 +649,5 @@ public class MainWindow extends javax.swing.JFrame {
                 testCodeTextArea.setText(f.generatedCode);
             }
         }
-        
-        
     }
 }
