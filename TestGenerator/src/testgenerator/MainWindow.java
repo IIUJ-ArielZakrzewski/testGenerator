@@ -14,7 +14,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.text.DefaultCaret;
 /**
  *
  * @author Ariel
@@ -102,7 +101,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jMenu1.setText("Plik");
 
-        openProjectMenuItem.setText("Otwórz projekt NetBeans");
+        openProjectMenuItem.setText("Otwórz projekt");
         openProjectMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openProjectMenuItemActionPerformed(evt);
@@ -215,15 +214,16 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
                     .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(fileList, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fileList, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -248,6 +248,7 @@ public class MainWindow extends javax.swing.JFrame {
                     }
                     TestFile fil = new TestFile(source, f.getName(), packageName);
                     SourceFile sil = new SourceFile(f.getName(), f.getAbsolutePath(), source, packageName);
+                    sil.setRefTestFile(fil);
                     testFiles.add(fil);
                     sourceFiles.add(sil);
                     fileList.add(sil.packageName + "/" + sil.name);
@@ -279,8 +280,11 @@ public class MainWindow extends javax.swing.JFrame {
                     source += in.nextLine() + "\n";
                 }
                 newFileName = sourceFile.getName();
-                testFiles.add(new TestFile(source, sourceFile.getName()));
-                sourceFiles.add(new SourceFile(sourceFile.getName(), sourceFile.getAbsolutePath(), source));
+                TestFile fil = new TestFile(source, sourceFile.getName());
+                SourceFile sil = new SourceFile(sourceFile.getName(), sourceFile.getAbsolutePath(), source);
+                sil.setRefTestFile(fil);
+                testFiles.add(fil);
+                sourceFiles.add(sil);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -359,13 +363,31 @@ public class MainWindow extends javax.swing.JFrame {
                 }
             }
         }
-        for(TestFile f : testFiles)
+        
+        if(sources.isEmpty())
         {
-            if(f.refFile.equals(actualFile))
+            for(SourceFile f : sourceFiles)
             {
-                f.generateInputTests(sources);
+                if(f.name.equals(actualFile))
+                {
+                    sources.add(f);
+                }
             }
         }
+        try
+        {
+            for(TestFile f : testFiles)
+            {
+                if(f.refFile.equals(actualFile))
+                {
+
+                    f.generateInputTests(sources);
+                }
+            }
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        refreshTextAreas(actualFile);
     }//GEN-LAST:event_inputTestGeneratorMenuItemActionPerformed
 
     private void closeProjectFilesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeProjectFilesMenuItemActionPerformed

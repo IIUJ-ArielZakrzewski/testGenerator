@@ -6,6 +6,7 @@ package testgenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -18,6 +19,8 @@ public class Interfejs {
     List<Metoda> methods;
     List<Klasa> implementations;
     String interfaceBody;
+    String packageName;
+    TestFile referencedTestFile;
     
     //###############################WYNIKOWY KOD###############################
     List<UnitaryTestMethod> tests;
@@ -25,7 +28,7 @@ public class Interfejs {
     String testCode;
     
     //###############################KONSTRUKTORY###############################
-    public Interfejs(String nazwa)
+    public Interfejs(String nazwa, TestFile ref)
     {
         name = nazwa;
         methods = new ArrayList<>();
@@ -34,9 +37,10 @@ public class Interfejs {
         tests = new ArrayList<>();
         imports = new ArrayList<>();
         testCode = "";
+        referencedTestFile = ref;
     }
     
-    public Interfejs(String nazwa, List metody)
+    public Interfejs(String nazwa, List metody, TestFile ref)
     {
         name = nazwa;
         methods = metody;
@@ -45,9 +49,10 @@ public class Interfejs {
         tests = new ArrayList<>();
         imports = new ArrayList<>();
         testCode = "";
+        referencedTestFile = ref;
     }
     
-    public Interfejs(String nazwa, String tresc)
+    public Interfejs(String nazwa, String tresc, TestFile ref)
     {
         name = nazwa;
         methods = new ArrayList<>();
@@ -56,9 +61,10 @@ public class Interfejs {
         tests = new ArrayList<>();
         imports = new ArrayList<>();
         testCode = "";
+        referencedTestFile = ref;
     }
     
-    public Interfejs(String nazwa, List metody, String tresc)
+    public Interfejs(String nazwa, List metody, String tresc, TestFile ref)
     {
         name = nazwa;
         methods = metody;
@@ -67,9 +73,20 @@ public class Interfejs {
         tests = new ArrayList<>();
         imports = new ArrayList<>();
         testCode = "";
+        referencedTestFile = ref;
     }
     
     //###############################METODY BEAN PROGRAMMING###############################
+    public String getPackageName()
+    {
+        return packageName;
+    }
+    
+    public void setPackageName(String  pkgName)
+    {
+        packageName = pkgName;
+    }
+    
     public String getName()
     {
         return name;
@@ -354,7 +371,70 @@ public class Interfejs {
     //###############################METODY ANALIZY KODU###############################
     public void analyzeCode()
     {
-        
+        Scanner in = new Scanner(interfaceBody);
+        String line;
+        while(in.hasNextLine())
+        {
+            line = in.nextLine();
+            //System.out.println(line);
+            if(line.trim().isEmpty())
+            {
+                
+            } else if(line.matches("^.*\\s.+\\(.*\\);$")) //Deklaracja metody 
+            {
+                String attr = line.trim();
+                attr = attr.replace(";", "");
+                String[] tmp = attr.split("\\(");
+                tmp[1] = tmp[1].replace(")", "").trim();
+                String[] temp = tmp[0].split(" ");
+                String returnType;
+                String methodName;
+                List<Parametr> parameters = new ArrayList<>();
+                if(temp.length == 2)
+                {
+                    returnType = temp[0];
+                    methodName = temp[1];
+                } else if(temp.length == 3)
+                {
+                    returnType = temp[1];
+                    methodName = temp[2];
+                } else {
+                    System.out.println("Błąd danych");
+                    return;
+                }
+                if(!tmp[1].isEmpty())
+                {
+                    temp = tmp[1].split(",");
+                    for(int i = 0; i<temp.length; i++)
+                    {
+                        temp[i].trim();
+                        String[] par = temp[i].split(" ");
+                        Parametr p = new Parametr(par[1].trim(), par[0].trim());
+                        parameters.add(p);
+                    }
+                }
+                Metoda m;
+                if(parameters.size()>0)
+                {
+                    m = new Metoda(methodName, returnType, parameters, null);
+                } else {
+                    m = new Metoda(methodName, returnType, null);
+                }
+                methods.add(m);
+            } else if(line.contains("//")){
+                
+            } else if(line.contains("/*")){
+                while(!line.contains("*/"))
+                {
+                    line = in.nextLine();
+                }
+            } else if(line.trim().equals("{") || line.trim().contains("}"))
+            {
+                
+            } else {
+                System.out.println("Błąd danych");
+            }
+        }
     }
     
     //###############################METODY GENERACJI TESTÓW###############################

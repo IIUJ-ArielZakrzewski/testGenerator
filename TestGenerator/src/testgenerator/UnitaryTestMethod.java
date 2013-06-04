@@ -6,6 +6,7 @@ package testgenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -111,7 +112,25 @@ public class UnitaryTestMethod {
     
     public String getBodyText()
     {
-        return bodyText;
+        Scanner in = new Scanner(bodyText);
+        String result = "";
+        while(in.hasNextLine())
+        {
+            String arg = in.nextLine();
+            switch (arg.trim()) {
+                case "{":
+                    result += arg;
+                    break;
+                case "}":
+                    result += "\n" + arg;
+                    break;
+                default:
+                    result += "\n    " + arg;
+                    break;
+            }
+            
+        }
+        return result;
     }
     
     public void setBodyText(String newText)
@@ -126,6 +145,19 @@ public class UnitaryTestMethod {
     
     public String getComment()
     {
-        return comment;
+        Scanner in = new Scanner(comment);
+        String result = "";
+        result += "/*" + in.nextLine();
+        while(in.hasNextLine())
+        {
+            result += "\n*" + in.nextLine();
+        }
+        result += "\n*/";
+        return result;
+    }
+    
+    public void addCommandLine(String line)
+    {
+        comment += "\n" + line;
     }
 }
